@@ -1,0 +1,14 @@
+L:\myCodes\CSharp\TickTakToe\bin\Debug\net8.0\TickTakToe.exe
+L:\myCodes\CSharp\TickTakToe\bin\Debug\net8.0\TickTakToe.deps.json
+L:\myCodes\CSharp\TickTakToe\bin\Debug\net8.0\TickTakToe.runtimeconfig.json
+L:\myCodes\CSharp\TickTakToe\bin\Debug\net8.0\TickTakToe.dll
+L:\myCodes\CSharp\TickTakToe\bin\Debug\net8.0\TickTakToe.pdb
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.GeneratedMSBuildEditorConfig.editorconfig
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.AssemblyInfoInputs.cache
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.AssemblyInfo.cs
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.csproj.CoreCompileInputs.cache
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.dll
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\refint\TickTakToe.dll
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.pdb
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\TickTakToe.genruntimeconfig.cache
+L:\myCodes\CSharp\TickTakToe\obj\Debug\net8.0\ref\TickTakToe.dll
