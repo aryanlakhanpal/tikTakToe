@@ -1,130 +1,159 @@
-﻿using System;
+using System;
 
 class TicTacToe
 {
-    static char[,] board = {
-        { '1', '2', '3' },
-        { '4', '5', '6' },
-        { '7', '8', '9' }
-    };
-    static char currentPlayer = 'X';
+    static char[] board = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+    static char player = 'X';
+    static char computer = 'O';
 
     static void Main(string[] args)
     {
-        int turns = 0;
-        bool gameWon = false;
+        bool isPlayerTurn = true;
 
-        Console.WriteLine("Welcome to Tic-Tac-Toe!");
-        Console.WriteLine("Player X and Player O take turns to mark the grid.");
-        Console.WriteLine("The first player to align three marks in a row, column, or diagonal wins.");
-        Console.WriteLine("\nPress any key to start the game...");
-        Console.ReadKey();
-
-        while (!gameWon && turns < 9)
+        do
         {
-            DisplayBoard();
-            PlayerMove();
-            gameWon = CheckWin();
+            Console.Clear();
+            PrintBoard();
 
-            if (!gameWon)
+            if (isPlayerTurn)
             {
-                SwitchPlayer();
-                turns++;
-            }
-        }
+                Console.WriteLine($"Player {player}, enter your move (1-9): ");
+                int move = int.Parse(Console.ReadLine()) - 1;
 
-        DisplayBoard();
-
-        if (gameWon)
-        {
-            Console.WriteLine($"\nCongratulations! Player {currentPlayer} wins!");
-        }
-        else
-        {
-            Console.WriteLine("\nIt's a draw!");
-        }
-
-        Console.WriteLine("Thanks for playing! Press any key to exit.");
-        Console.ReadKey();
-    }
-
-    static void DisplayBoard()
-    {
-        Console.Clear();
-        Console.WriteLine("   Tic-Tac-Toe");
-        Console.WriteLine("   -----------");
-        Console.WriteLine($"     {board[0, 0]} | {board[0, 1]} | {board[0, 2]} ");
-        Console.WriteLine("    ---+---+---");
-        Console.WriteLine($"     {board[1, 0]} | {board[1, 1]} | {board[1, 2]} ");
-        Console.WriteLine("    ---+---+---");
-        Console.WriteLine($"     {board[2, 0]} | {board[2, 1]} | {board[2, 2]} ");
-        Console.WriteLine("   -----------");
-        Console.WriteLine($"\nPlayer {currentPlayer}'s turn. Choose a number to place your mark:");
-    }
-
-    static void PlayerMove()
-    {
-        int choice;
-        bool validMove = false;
-
-        while (!validMove)
-        {
-            string input = Console.ReadLine();
-
-            if (int.TryParse(input, out choice) && choice >= 1 && choice <= 9)
-            {
-                int row = (choice - 1) / 3;
-                int col = (choice - 1) % 3;
-
-                if (board[row, col] != 'X' && board[row, col] != 'O')
+                if (move >= 0 && move < 9 && board[move] == ' ')
                 {
-                    board[row, col] = currentPlayer;
-                    validMove = true;
+                    board[move] = player;
+                    isPlayerTurn = false;
                 }
                 else
                 {
-                    Console.WriteLine("That spot is already taken. Try again:");
+                    Console.WriteLine("Invalid move, try again.");
+                    Console.ReadKey();
                 }
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a number between 1 and 9:");
+                int move = GetBestMove();
+                board[move] = computer;
+                isPlayerTurn = true;
+                Console.WriteLine($"Computer chooses {move + 1}");
+                System.Threading.Thread.Sleep(1000);
             }
+
+        } while (!IsWinner() && !IsDraw());
+
+        Console.Clear();
+        PrintBoard();
+
+        if (IsWinner())
+        {
+            Console.WriteLine($"{(isPlayerTurn ? "Computer" : "Player")} wins!");
+        }
+        else
+        {
+            Console.WriteLine("It's a draw!");
         }
     }
 
-    static void SwitchPlayer()
+    static void PrintBoard()
     {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        Console.WriteLine("╔═══╦═══╦═══╗");
+        Console.WriteLine($"║ {board[0]} ║ {board[1]} ║ {board[2]} ║");
+        Console.WriteLine("╠═══╬═══╬═══╣");
+        Console.WriteLine($"║ {board[3]} ║ {board[4]} ║ {board[5]} ║");
+        Console.WriteLine("╠═══╬═══╬═══╣");
+        Console.WriteLine($"║ {board[6]} ║ {board[7]} ║ {board[8]} ║");
+        Console.WriteLine("╚═══╩═══╩═══╝");
     }
 
-    static bool CheckWin()
+    static bool IsWinner()
     {
-        // Check rows
-        for (int i = 0; i < 3; i++)
+        return (CheckLine(0, 1, 2) || CheckLine(3, 4, 5) || CheckLine(6, 7, 8) ||
+                CheckLine(0, 3, 6) || CheckLine(1, 4, 7) || CheckLine(2, 5, 8) ||
+                CheckLine(0, 4, 8) || CheckLine(2, 4, 6));
+    }
+
+    static bool CheckLine(int pos1, int pos2, int pos3)
+    {
+        return (board[pos1] == board[pos2] && board[pos2] == board[pos3] && board[pos1] != ' ');
+    }
+
+    static bool IsDraw()
+    {
+        foreach (char c in board)
         {
-            if (board[i, 0] == currentPlayer && board[i, 1] == currentPlayer && board[i, 2] == currentPlayer)
+            if (c == ' ')
             {
-                return true;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static int GetBestMove()
+    {
+        int bestScore = int.MinValue;
+        int move = -1;
+
+        for (int i = 0; i < board.Length; i++)
+        {
+            if (board[i] == ' ')
+            {
+                board[i] = computer;
+                int score = Minimax(board, false);
+                board[i] = ' ';
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    move = i;
+                }
             }
         }
 
-        // Check columns
-        for (int i = 0; i < 3; i++)
+        return move;
+    }
+
+    static int Minimax(char[] boardState, bool isMaximizing)
+    {
+        if (IsWinner())
         {
-            if (board[0, i] == currentPlayer && board[1, i] == currentPlayer && board[2, i] == currentPlayer)
+            return isMaximizing ? -1 : 1;
+        }
+        if (IsDraw())
+        {
+            return 0;
+        }
+
+        if (isMaximizing)
+        {
+            int bestScore = int.MinValue;
+            for (int i = 0; i < boardState.Length; i++)
             {
-                return true;
+                if (boardState[i] == ' ')
+                {
+                    boardState[i] = computer;
+                    int score = Minimax(boardState, false);
+                    boardState[i] = ' ';
+                    bestScore = Math.Max(score, bestScore);
+                }
             }
+            return bestScore;
         }
-
-        // Check diagonals
-        if ((board[0, 0] == currentPlayer && board[1, 1] == currentPlayer && board[2, 2] == currentPlayer) ||
-            (board[0, 2] == currentPlayer && board[1, 1] == currentPlayer && board[2, 0] == currentPlayer))
+        else
         {
-            return true;
+            int bestScore = int.MaxValue;
+            for (int i = 0; i < boardState.Length; i++)
+            {
+                if (boardState[i] == ' ')
+                {
+                    boardState[i] = player;
+                    int score = Minimax(boardState, true);
+                    boardState[i] = ' ';
+                    bestScore = Math.Min(score, bestScore);
+                }
+            }
+            return bestScore;
         }
-
-        return false;
     }
 }
